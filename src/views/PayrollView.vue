@@ -1,9 +1,35 @@
 <template>
-<div>
-        <br><br><br>
-        <h1>Employee Payroll</h1>
-        <br>
+        <!--navbar-->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+        <li class="nav-item">
+            <router-link to="/Welcome" class="nav-link" href="#">Homepage</router-link>
+        </li>
+        <li class="nav-item">
+            <router-link to="/Employees" class="nav-link" href="#">Employees</router-link>
+        </li>
+        <li class="nav-item">
+            <router-link to="/Attendance" class="nav-link" href="#">Attendance Tracking</router-link>
+        </li>
+        <li class="nav-item">
+            <router-link to="/Payroll" class="nav-link" href="#">Payroll</router-link>
+        </li>
+        <li class="nav-item">
+            <router-link to="/" class="nav-link active" aria-current="page" href="#">Log out</router-link>
+        </li>
+        </ul>
     </div>
+    </div>
+    <a to="/Welcome" class="navbar-brand" href="#">Modern Tech Solutions</a>
+
+</nav>
+<br>
+<div>
     <table>
         <thead>
             <tr>
@@ -11,6 +37,7 @@
                 <th>Employee Name</th>
                 <th>Hourly Rate</th>
                 <th>Hours Worked</th>
+                <th>Monthly Salary</th>
                 <th>Payslip</th>
             </tr>
         </thead>
@@ -19,43 +46,26 @@
             <td>{{ payroll.name }}</td>
             <td>{{ payroll.hourlyRate }}</td>
             <td>{{ payroll.hoursWorked }}</td>
-            <td><button type="button" class="btn btn-success" @click="viewPayslip(payroll)">View Payslip</button><br></td>
+            <td>{{ formatCurrency(payroll.finalSalary) }}</td>
+            <td><button @click="generatePDF" class="btn btn-primary">Generate Payslip PDF</button></td>
         </tr>
     </table>
 
-    <!-- Modal Section -->
 
-    <div v-if="employeePayslip" class="modal" tabindex="-1" role="dialog" style="display: block;">
-    <div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-        <h5 class="modal-title">Payslip for {{ employeePayslip.name }}</h5>
-        <button type="button" class="btn-close" @click="closeModal"></button>
     </div>
-        <div class="modal-body">
-        <p><strong>Employee ID:</strong> {{ employeePayslip.employeeId }}</p>
-        <p><strong>Name:</strong> {{ employeePayslip.name }}</p>
-        <p><strong>Hours Worked:</strong> {{ employeePayslip.hoursWorked }}</p>
-        <p><strong>Leave Deductions:</strong> {{ employeePayslip.leaveDeductions }}</p>
-        <p><strong>Final Salary:</strong> {{ employeePayslip.finalSalary }}</p>
-        </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" @click="closeModal">Hide</button>
-    </div>
-    </div>
-    </div>
-</div>
 
 </template>
 <script>
 import Payroll from '@/components/Payroll.vue';
 import EmployeesView from './EmployeesView.vue';
+import Navbar from '@/components/Navbar.vue';
 
 
 export default {
     components: {
         Payroll,
-        EmployeesView
+        EmployeesView,
+        Navbar
     },
     data(){
         return{
@@ -159,13 +169,33 @@ export default {
     closeModal() {
     this.employeePayslip = null;
 },
+
+    formatCurrency(amount) {
+    return new Intl.NumberFormat('en-ZA', {
+        style: 'currency',
+        currency: 'ZAR',
+    }).format(amount);
+},
+}
+
 }
 
 
     
-}
+
 </script>
 <style scoped>
+#navbarNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: cadetblue;
+    color: white;
+    padding: 1rem 0;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 table{
     border-collapse: collapse;
     border: 2px solid black;

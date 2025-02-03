@@ -1,83 +1,90 @@
 <template>
-<div class="container">
-    
-    <div class="welcome-message">Welcome to ModernTech Solutions</div>
-    <div class="motto">"Crafting elegant and efficient software solutions that empower our clients."</div>
-</div>
+  <div class="container">
+    <div class="content">
+      <h1 class="welcome-message">Welcome to ModernTech Solutions</h1>
+      <p class="motto">"Crafting elegant and efficient software solutions that empower our clients."</p>
+      
+      <!-- Centered Explore Workplace Button -->
+      <router-link to="/Employees" class="btn">Explore Workplace</router-link>
+    </div>
+  </div>
 </template>
+
 <script>
 export default {
-    name: "Welcome"
-    
-}
+  name: "Welcome"
+};
 </script>
+
 <style scoped>
-.container{
-  font-family: Arial, sans-serif;
-  background-image: url("https://i.pinimg.com/736x/47/5f/31/475f31d24a3b94078c1a4199604a71b0.jpg");
+/* Full-screen centered layout */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
+  background-image: url("https://i.pinimg.com/736x/47/5f/31/475f31d24a3b94078c1a4199604a71b0.jpg");
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  flex-direction: column;
   margin: 0;
   max-width: 100%;
-  padding-top: 250px;
-  background-size: cover;
+
 }
+
+/* Content wrapper */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Welcome message */
 .welcome-message {
   font-size: 50px;
   text-shadow: 5px 5px navy;
   color: white;
   margin-bottom: 20px;
-  margin-left: 300px;
-  animation: close 5s 1;
+  animation: fadeIn 2s ease-in-out;
 }
+
+/* Motto styling */
 .motto {
   text-shadow: 3px 3px white;
   font-size: 30px;
-  font-weight: bolder;
+  font-weight: bold;
   color: navy;
-  margin-top: 50px;
-  margin-left: 150px;
-  animation: tech 5s 1;
+  margin-bottom: 30px;
+  animation: fadeIn 3s ease-in-out;
 }
-@keyframes close {
-  0% {
-    margin-top: 40px;
-  }
-  30% {
-    letter-spacing: 40px;
-    margin-bottom: -40px;
-  }
-  85% {
-    letter-spacing: 40px;
-    margin-bottom: -40px;
-  }
-}
-@keyframes tech {
-  0% {
-    margin-bottom: -30px;
-    opacity: 0;
-  }
-  30% {
-    opacity: 0;
-    margin-bottom: -30px;
-  }
-  85% {
-    letter-spacing: 4px;
-    margin-bottom: -35px;
-    opacity: 0;
-  }
-}
-.footer {
-  position: fixed;
-  bottom: 0px;
-  left: 0px;
-  width: 100%;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 20px 0;
-}
-.dropdown-item:hover {
-  background-color: blue;
+
+/* Explore Workplace Button - Centered */
+.btn {
+  display: inline-block;
+  padding: 15px 30px;
+  font-size: 20px;
+  font-weight: bold;
   color: white;
+  background-color: #1E3A8A;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.btn:hover {
+  background-color: #3B82F6;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
