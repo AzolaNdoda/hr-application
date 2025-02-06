@@ -1,5 +1,6 @@
 <template>
         <!--navbar-->
+        
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,24 +45,35 @@
         <tr v-for="payroll in payrollData" :key="payroll.employeeId">
             <td>{{ payroll.employeeId }}</td>
             <td>{{ payroll.name }}</td>
-            <td>{{ payroll.hourlyRate }}</td>
+            <td>{{formatCurrency(payroll.hourlyRate)}}</td>
             <td>{{ payroll.hoursWorked }}</td>
             <td>{{ formatCurrency(payroll.finalSalary) }}</td>
-            <td><button @click="generatePDF" class="btn btn-primary">Generate Payslip PDF</button></td>
+            <td><button @click="generatePDF(payroll)" class="btn btn-primary">Generate Payslip PDF</button></td>
+            <td><button @click="deletePayroll(payroll.pay_id)" class="btn btn-primary">Delete Payroll</button></td>
+
         </tr>
     </table>
 
 
     </div>
 
+    {{ $store.state.payroll }}
+
 </template>
 <script>
 import Payroll from '@/components/Payroll.vue';
 import EmployeesView from './EmployeesView.vue';
 import Navbar from '@/components/Navbar.vue';
+import { jsPDF } from "jspdf";
+import autoTable from 'jspdf-autotable';
 
 
 export default {
+     // it runs code the moment thr component loads
+    mounted(){
+        this.$store.dispatch("getData")
+    },
+
     components: {
         Payroll,
         EmployeesView,
@@ -156,11 +168,15 @@ export default {
         }
     },
     methods: {
-        calculateFinalSalary(employee) {
+        deletePayroll(){
+    this.$store.dispatch('deletePayroll')
+},
+    calculateFinalSalary(employee) {
     const basicSalary = employee.hoursWorked * employee.hourlyRate;
     const employeeDeduction = employee.leaveDeductions * employee.hourlyRate;
     return basicSalary - employeeDeduction;
 },
+
     viewPayslip(employee) {
     // Calculating the  final salary 
     const finalSalary = this.calculateFinalSalary(employee);
@@ -176,12 +192,49 @@ export default {
         currency: 'ZAR',
     }).format(amount);
 },
+
+// Payslip generation
+
+generatePDF(employee) {
+    const doc = new jsPDF();
+
+    // Payslip Title
+    doc.setFontSize(18);
+    doc.text("ModernTech Solutions", 14, 20);
+    doc.setFontSize(16);
+    doc.text("Employee Payslip", 14, 30);
+
+    // Table headers
+    const headers = [["Employee ID", "Name", "Hourly Rate", "Hours Worked", "Leave Deductions", "Final Salary"]];
+
+    // Table data (only for the selected employee)
+    const data = [[
+        employee.employeeId,
+        employee.name,
+        this.formatCurrency(employee.hourlyRate),
+        employee.hoursWorked,
+        employee.leaveDeductions,
+        this.formatCurrency(employee.finalSalary)
+    ]];
+
+    // Adding table using autoTable
+    autoTable(doc, {
+        startY: 40,  
+        head: headers,
+        body: data,
+        theme: "striped",
+        headStyles: { fillColor: [70, 130, 180] }, 
+        margin: { top: 20 }
+    });
+
+    // Saving the PDF with employee name
+    doc.save(`Payslip_${employee.name}.pdf`);
 }
 
 }
 
+}
 
-    
 
 </script>
 <style scoped>
@@ -232,14 +285,3 @@ h1 {
 
 </style>
 
-Add the table to the PDF
-     doc.autoTable({
-       startY: 30,      // Starting Y position for the table
-       head: headers,   // Table headers
-       body: data,      // Table data
-       theme: 'striped',   // Table style (options: 'striped', 'grid', 'plain')
-       headStyles: { fillColor: [70, 130, 180] }, // Header background color (steel blue)
-       margin: { top: 20 }
-     });
-     // This is my file name
-     doc.save("ModernTech Solutions Payslip.pdf")

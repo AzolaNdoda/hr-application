@@ -36,6 +36,7 @@
         <input type="text" v-model="searchQuery" placeholder="Search by Employee Name or Department" class="search-bar"/>
         
     </div>
+    <br><br>
     <div class="row">
     <div class="card" v-for="employee in filteredEmployees" :key="employee" style="width: 18rem;">
     <img 
