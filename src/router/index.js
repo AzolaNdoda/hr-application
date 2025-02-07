@@ -4,10 +4,6 @@ import AttendanceView from '@/views/AttendanceView.vue'
 import EmployeesView from '@/views/EmployeesView.vue'
 import PayrollView from '@/views/PayrollView.vue'
 import Welcome from '@/components/Welcome.vue'
-import EmployeesV from '@/views/EmployeesV.vue'
-
-
-
 
 
 const routes = [
@@ -35,11 +31,6 @@ const routes = [
     path: '/Attendance',
     name: 'Attendance',
     component: AttendanceView
-  },
-  {
-    path: '/Employees',
-    name: 'Employees',
-    component: EmployeesV
   },
 
 ]
