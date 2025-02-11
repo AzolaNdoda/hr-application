@@ -566,6 +566,17 @@ export default {
 </script>
 
 <style scoped>
+#navbarNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: cadetblue;
+    color: white;
+    padding: 1rem 0;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 .calendar {
     display: flex;
     justify-content: center;

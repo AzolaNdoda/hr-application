@@ -1,156 +1,196 @@
 <template>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <!--nav bar-->
+    <div>
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item"><router-link to="/Welcome" class="nav-link">Homepage</router-link></li>
-          <li class="nav-item"><router-link to="/Employees" class="nav-link">Employees</router-link></li>
-          <li class="nav-item"><router-link to="/Attendance" class="nav-link">Attendance Tracking</router-link></li>
-          <li class="nav-item"><router-link to="/Payroll" class="nav-link">Payroll</router-link></li>
-          <li class="nav-item"><router-link to="/" class="nav-link active">Log out</router-link></li>
+        <li class="nav-item">
+            <router-link to="/Welcome" class="nav-link" href="#">Homepage</router-link>
+        </li>
+        <li class="nav-item">
+            <router-link to="/Employees" class="nav-link" href="#">Employees</router-link>
+        </li>
+        <li class="nav-item">
+            <router-link to="/Attendance" class="nav-link" href="#">Attendance Tracking</router-link>
+        </li>
+        <li class="nav-item">
+            <router-link to="/Payroll" class="nav-link" href="#">Payroll</router-link>
+        </li>
+        <li class="nav-item">
+            <router-link to="/" class="nav-link active" aria-current="page" href="#">Log out</router-link>
+        </li>
         </ul>
-      </div>
     </div>
-    <a class="navbar-brand">Modern Tech Solutions</a>
-  </nav>
-  <div>{{ $store.state.employees }}</div>
+    </div>
+    <a to="/Welcome" class="navbar-brand" href="#">Modern Tech Solutions</a>
 
+</nav>
+    </div>
   <div>
-    <br>
-    <input type="text" v-model="searchQuery" placeholder="Search by Employee Name or Department" class="search-bar" />
   </div>
+  <table>
+    <thead>
+    <tr>
+      <th>Employee ID</th>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Position</th>
+      <th>Salary</th>
+      <th>Employment History</th>
+      <th>Email</th>
+      <th>Department ID</th>
+      <th>Update Info</th>
+      <th>Remove Employee</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="employee in $store.state.employees" :key="employee">
+      <td>{{ employee.employee_id }}</td>
+      <td>{{ employee.name }}</td>
+      <td>{{ employee.gender }}</td>
+      <td>{{ employee.position }}</td>
+      <td>{{formatCurrency(employee.salary)}}</td>
+      <td>{{ employee.employmentHistory }}</td>
+      <td>{{ employee.email }}</td>
+      <td>{{ employee.department_id }}</td>
+      <td>
+        <edit-modal :employee="employee"/>
+      </td>
+      <td><button @click="removeEmployee(employee.employee_id)">REMOVE</button></td>
+    </tr>
+  </tbody>
+  </table>
+  
+  
 
-  <br><br>
-
-  <div class="row">
-    <div class="card" v-for="employee in $store.state.employees" :key="employee" style="width: 18rem;">
-      <img :src="employeeImage(employee)" class="card-img-top" alt="Employee Icon" />
-      <div class="card-body">
-        <h5 class="card-title">{{ employee.name }}</h5>
-        <p class="card-text">{{ employee.employee_id }}</p>
-        <p class="card-text">{{ employee.position }}</p>
-        <button class="btn btn-primary" @click="getSingleEmployee(employee)">Full Details</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- <-- Employee Details Modal -->
-  <div class="modal" id="employeeModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Full Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body" v-if="employee">
-          <p><strong>Employee Id: {{ selectedEmployee.employee_id }} </strong></p>
-          <p><strong>Name: {{ selectedEmployee.name }}</strong></p>
-          <p><strong>Gender: {{ selectedEmployee.gender }}</strong></p>
-          <p><strong>Position: {{ selectedEmployee.position }}</strong></p>
-          <p><strong>Department: {{ selectedEmployee.department }}</strong></p>
-          <p><strong>Salary: {{ selectedEmployee.salery }}</strong></p>
-          <p><strong>Employment History: {{ selectedEmployee.employmentHistory }}</strong></p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" @click="updateEmployee()">Edit</button>
-          <button class="btn btn-danger" @click="removeEmployee(employee.employee_id)">Remove Employee</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add Employee Modal -->
-  <div>
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add New Employee</button>
-    <div class="modal" id="addEmployeeModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Add New Employee</h5>
-            <button class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <form @submit.prevent="addEmployee">
-              <input v-model="newEmployee.name" type="text" class="form-control" placeholder="Name" required />
-              <select v-model="newEmployee.gender" class="form-control">
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-              <input v-model="newEmployee.position" type="text" class="form-control" placeholder="Position" required />
-              <input v-model="newEmployee.department" type="text" class="form-control" placeholder="Department" required />
-              <input v-model="newEmployee.salary" type="number" class="form-control" placeholder="Salary" required />
-              <button type="submit" class="btn btn-success" @click="insertEmployee()">Add Employee</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div> 
-  </div>
 </template>
 
 <script>
+import editModal from '@/components/editModal.vue';
+
 export default {
   data(){
     return{
-      searchQuery: '',
-      newEmployee: {
-        name: '',
-        gender: '',
-        position: '',
-        department: '',
-        salary: ''
+      employee:{
+        name: null,
+        gender: null,
+        position: null,
+        salary: null,
+        employmentHistory: null,
+        email: null,
+        department_id: null
       },
       selectedEmployee: null
+        
 
     }
   },
-  computed:{
-    filteredEmployees() {
-      return this.$store.state.employees.filter(employee =>
-        employee.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        employee.department.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    }
+  components:{
+    editModal
 
   },
-   // the code runs when the component loads
   mounted(){
     this.$store.dispatch('getEmployees')
-  
+  }
+  ,
+
+  computed:{
+
+
   },
+
   methods:{
     removeEmployee(employee_id){
       this.$store.dispatch('removeEmployee',employee_id)
     },
     insertEmployee(){
-      this.$store.dispatch('insertEmployee',this.newEmployee);
-      this.newEmployee = {name: '', gender: '', position: '', department: '', salary: ''};
+      this.$store.dispatch('insertEmployee',this.employee)
     },
-    updateEmployee(){
-      if(this.selectedEmployee){
-        this.$store.dispatch('updateEmployee', this.selectedEmployee);
-
-      }
     
-
-    },
-    getSingleEmployee(employee) {
-      this.selectedEmployee = employee;
-      new bootstrap.Modal(document.getElementById('employeeModal')).show();
-    },
-    employeeImage(employee) {
-      return require(`@/assets/${employee.gender === 'Female' ? 'female-employee.jpg' : 'male-employee-icon.jpg'}`);
-    }
-  },
-
-  }
+    formatCurrency(amount) {
+    return new Intl.NumberFormat('en-ZA', {
+        style: 'currency',
+        currency: 'ZAR',
+    }).format(amount);
+},
+      },
+}
 </script>
 
 <style scoped>
-.search-bar { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-.card { background-color: grey; box-shadow: 10px 10px; margin: 20px; }
+ /* NAVBAR FIX */
+#navbarNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: cadetblue;
+    color: white;
+    padding: 10px 20px;
+    z-index: 1050;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 65px;
+    display: flex;
+    justify-content: space-between; /* Align navbar content */
+    align-items: center;
+    flex-wrap: wrap; /* Ensures items wrap on smaller screens */
+}
+.navbar-brand {
+    font-size: 20px;
+    font-weight: bold;
+    color: white !important;
+    text-decoration: none;
+    margin-left: 20px;
+    margin-right: auto; /* Ensures the brand stays to the left */
+}
+.navbar-nav {
+    display: flex;
+    gap: 20px;
+    margin-right: 20px;
+}
+.navbar-nav .nav-item {
+    list-style: none;
+}
+.navbar-nav .nav-link {
+    color: white !important;
+    font-size: 16px;
+    padding: 8px 12px;
+    text-decoration: none;
+}
+/* TABLE FIX */
+table {
+    border-collapse: collapse;
+    border: 2px solid black;
+    width: 100%;
+    margin-top: 80px; /* Ensure the table is below the navbar */
+}
+/* Make table headers visible under navbar */
+th {
+    background-color: rgb(55, 157, 161) !important;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    text-align: center;
+    position: sticky;
+    top: 65px; /* Adjust the top to push the header below navbar */
+    z-index: 1000; /* Keeps the header above table content */
+}
+th, td {
+    border: 2px solid black;
+    text-align: center;
+    padding: 10px;
+}
+/* BODY SPACING */
+body {
+    padding-top: 70px; /* Ensure content is pushed below navbar */
+    padding-bottom: 80px;
+}
+/* LOGOUT BUTTON AND NAVBAR FIX */
+.navbar-nav .nav-item:last-child {
+    margin-left: auto; /* Push the "Log out" to the far right */
+}
 </style>

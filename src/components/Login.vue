@@ -12,10 +12,10 @@
       <p>Please enter your login details :)</p>
       <form @submit.prevent="login">
         <div class="tbox">
-          <input v-model="username" type="text" placeholder="Username" required />
+          <input v-model="username" type="text" placeholder="Name" required />
         </div>
         <div class="tbox">
-          <input v-model="password" type="password" placeholder="Employee ID" required />
+          <input v-model="password" type="password" placeholder="Password" required />
         </div>
         <div class="tbox">
           <input v-model="email" type="email" placeholder="siba17@moderntech.com" required />
@@ -44,7 +44,7 @@ export default {
     login() {
       // Employee email validation
       if (!this.email.endsWith("@moderntech.com")) {
-        this.errorMessage = "Access Denied: Only ModernTech employees can log in.";
+        this.errorMessage = "Access Denied: Only ModernTech HR employees can log in.";
         return;
       }
 
