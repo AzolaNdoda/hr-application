@@ -58,7 +58,7 @@
             <button @click="deletePayroll(payroll.pay_id)" class="btn btn-primary">Delete</button>
             </td>
             <td>
-            <button @click="editPayroll(payroll.pay_id)" class="btn btn-primary">Edit</button>
+            <button @click="editPayroll(payroll)" class="btn btn-warning">Edit</button>
             </td>
            
         </tr>
@@ -67,7 +67,8 @@
 
 <br>
 <br>
-<td><button @click="insertPayroll(payroll.pay_id)" class="btn btn-primary">Add Payroll</button></td>
+<td><button @click="insertPayroll(newPayroll)" class="btn btn-primary">Add Payroll</button></td>
+
 
 </div>
 
@@ -90,99 +91,39 @@ components: {
     EmployeesView,
     Navbar
 },
-// data(){
-//     return{
-//         payrollData: [
-//     {
-//         "employeeId": 1,
-//         "name": "Sibongile Nkosi",
-//         "hourlyRate": 457.24,
-//         "hoursWorked": 160,
-//         "leaveDeductions": 8,
-//         "finalSalary": 69500
-//     },
-//     {
-//         "employeeId": 2,
-//         "name": "Lungile Moyo",
-//         "hourlyRate": 564.29,
-//         "hoursWorked": 150,
-//         "leaveDeductions": 10,
-//         "finalSalary": 79000
-//     },
-//     {
-//         "employeeId": 3,
-//         "name": "Thabo Molefe",
-//         "hourlyRate": 330.12,
-//         "hoursWorked": 170,
-//         "leaveDeductions": 4,
-//         "finalSalary": 54800
-//     },
-//     {
-//         "employeeId": 4,
-//         "name": "Keshav Naidoo",
-//         "hourlyRate": 375.47,
-//         "hoursWorked": 165,
-//         "leaveDeductions": 6,
-//         "finalSalary": 59700
-//     },
-//     {
-//         "employeeId": 5,
-//         "name": "Zanele Khumalo",
-//         "hourlyRate": 378.10,
-//         "hoursWorked": 158,
-//         "leaveDeductions": 5,
-//         "finalSalary": 57850
-//     },
-//     {
-//         "employeeId": 6,
-//         "name": "Sipho Zulu",
-//         "hourlyRate": 390.36,
-//         "hoursWorked": 168,
-//         "leaveDeductions": 2,
-//         "finalSalary": 64800
-//     },
-//     {
-//         "employeeId": 7,
-//         "name": "Naledi Moeketsi",
-//         "hourlyRate": 417.44,
-//         "hoursWorked": 175,
-//         "leaveDeductions": 3,
-//         "finalSalary": 71800
-//     },
-//     {
-//         "employeeId": 8,
-//         "name": "Farai Gumbo",
-//         "hourlyRate": 350,
-//         "hoursWorked": 160,
-//         "leaveDeductions": 0,
-//         "finalSalary": 56000
-//     },
-//     {
-//         "employeeId": 9,
-//         "name": "Karabo Dlamini",
-//         "hourlyRate": 410,
-//         "hoursWorked": 155,
-//         "leaveDeductions": 5,
-//         "finalSalary": 61500
-//     },
-//     {
-//         "employeeId": 10,
-//         "name": "Fatima Patel",
-//         "hourlyRate": 365.51,
-//         "hoursWorked": 162,
-//         "leaveDeductions": 4,
-//         "finalSalary": 57750
-//     },
-// ],
-//     employeePayslip: null,
-//     }
-// },
+
 methods: {
     deletePayroll(payId) {
-this.$store.dispatch('deletePayroll', payId);
-},
-insertPayroll(payId) {
-this.$store.dispatch('insertPayroll', payId);
+    if (confirm("Are you sure you want to delete this payroll record?")) {
+        console.log("Deleting Payroll ID:", payId);
+        this.$store.dispatch('deletePayroll', payId)
+            .then(() => {
+                alert("Payroll record deleted successfully.");
+            })
+            .catch(err => {
+                console.error("Error deleting payroll:", err);
+            });
+    }
+}
+,
+insertPayroll() {
+    const newPayroll = {
+        pay_id: Date.now(),  // Generate a temporary unique ID
+        name: "New Employee",
+        hourly_rate: 0,
+        hours_worked: 0,
+        leave_deductions: 0,
+        final_salary: 0
+    };
+
+    console.log("Adding Payroll:", newPayroll);
+    this.$store.dispatch('insertPayroll', newPayroll);
+}
+,
+editPayroll(payId) {
+    console.log("Editing Payroll ID:", payId);
+    // Here, you can navigate to an edit page or open a modal
+    // Example: this.$router.push(`/edit/${payId}`);
 },
 calculateFinalSalary(employee) {
 const basicSalary = employee.hours_worked * employee.hourly_rate;

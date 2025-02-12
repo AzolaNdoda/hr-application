@@ -1,9 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/components/Login.vue'
 import AttendanceView from '@/views/AttendanceView.vue'
 import EmployeesView from '@/views/EmployeesView.vue'
-import PayrollView from '@/views/PayrollView.vue'
 import Welcome from '@/components/Welcome.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import LoginView from "../views/LoginView.vue";
+import PayrollView from '@/views/PayrollView.vue'
+// import PayrollView from '../views/PayrollView.vue'
+
+
+
 
 
 const routes = [
@@ -11,6 +16,12 @@ const routes = [
     path: '/',
     name: 'Login',
     component: Login
+  
+  },
+  {
+    path: "/", 
+    name: "LoginView",
+    component: LoginView 
   },
   {
     path: '/Welcome',
@@ -33,11 +44,23 @@ const routes = [
     component: AttendanceView
   },
 
-]
+];
+
+
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
-})
+  history: createWebHistory(),
+  routes,
+});
 
-export default router
+// Protect routes
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+  if (to.meta.requiresAuth && !token) {
+    next("/");
+  } else {
+    next();
+  }
+});
+
+export default router;
