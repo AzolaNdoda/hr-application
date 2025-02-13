@@ -10,12 +10,12 @@
     <li class="nav-item">
         <router-link to="/Welcome" class="nav-link" href="#">Homepage</router-link>
     </li>
-    <!-- <li class="nav-item">
+    <li class="nav-item">
         <router-link to="/Employees" class="nav-link" href="#">Employees</router-link>
     </li>
     <li class="nav-item">
         <router-link to="/Attendance" class="nav-link" href="#">Attendance Tracking</router-link>
-    </li> -->
+    </li>
     <li class="nav-item">
         <router-link to="/Payroll" class="nav-link" href="#">Payroll</router-link>
     </li>
@@ -58,7 +58,7 @@
             <button @click="deletePayroll(payroll.pay_id)" class="btn btn-primary">Delete</button>
             </td>
             <td>
-            <button @click="editPayroll(payroll.pay_id)" class="btn btn-primary">Edit</button>
+            <button @click="editPayroll(payroll)" class="btn btn-warning">Edit</button>
             </td>
            
         </tr>
@@ -67,7 +67,8 @@
 
 <br>
 <br>
-<td><button @click="insertPayroll(payroll.pay_id)" class="btn btn-primary">Add Payroll</button></td>
+<td><button @click="insertPayroll(newPayroll)" class="btn btn-primary">Add Payroll</button></td>
+
 
 </div>
 
@@ -90,18 +91,38 @@ components: {
     EmployeesView,
     Navbar
 },
-data(){
-    return{
-
-employeePayslip: null,
-}
-},
 methods: {
     deletePayroll(payId) {
-this.$store.dispatch('deletePayroll', payId);
-},
-insertPayroll(payId) {
-this.$store.dispatch('insertPayroll', payId);
+    if (confirm("Are you sure you want to delete this payroll record?")) {
+        console.log("Deleting Payroll ID:", payId);
+        this.$store.dispatch('deletePayroll', payId)
+            .then(() => {
+                alert("Payroll record deleted successfully.");
+            })
+            .catch(err => {
+                console.error("Error deleting payroll:", err);
+            });
+    }
+}
+,
+insertPayroll() {
+    const newPayroll = {
+        pay_id: Date.now(),  // Generate a temporary unique ID
+        name: "New Employee",
+        hourly_rate: 0,
+        hours_worked: 0,
+        leave_deductions: 0,
+        final_salary: 0
+    };
+
+    console.log("Adding Payroll:", newPayroll);
+    this.$store.dispatch('insertPayroll', newPayroll);
+}
+,
+editPayroll(payId) {
+    console.log("Editing Payroll ID:", payId);
+    // Here, you can navigate to an edit page or open a modal
+    // Example: this.$router.push(`/edit/${payId}`);
 },
 calculateFinalSalary(employee) {
 const basicSalary = employee.hours_worked * employee.hourly_rate;
